@@ -11,7 +11,7 @@ library(stats)
 
 ### Partition occurrence data
 
-## Selected model: fc.LQHP_rm.4
+## Selected model: fc.LQH_rm.5
 
 groups_Aa2 <- part_partitionOccs(
   occs = occs_Aa ,
@@ -26,11 +26,12 @@ model_Aa_best <- model_maxent(
   bg = bgEnvsVals_Aa,
   user.grp = groups_Aa2, 
   bgMsk = bgMask_Aa,
-  rms = c(4, 5), 
+  rms = c(5, 6), 
   rmsStep =  1.5,
-  fcs = c("LQHP"),
+  fcs = c("LQH"),
   clampSel = TRUE,
   algMaxent = "maxent.jar",
+  catEnvs = c("s2017_water","s2017_bare","s2017_herb"),
   parallel = FALSE)
 
 evalTbl_b <- model_Aa_best@results
@@ -38,10 +39,10 @@ write.csv(evalTbl_b, "best_s2016_aegypti.csv", row.names=FALSE)
 evalMods <- model_Aa_best@models
 evalPred <- model_Aa_best@predictions
 evalVar <- model_Aa_best@variable.importance
-write.csv(evalVar, "imp_s2016_aeg.csv", row.names=FALSE)
+write.csv(evalVar, "imp_s2017_aeg.csv", row.names=FALSE)
 
 # view response curves for environmental variables
-response(evalMods[["fc.LQHP_rm.4"]])
+response(evalMods[["fc.LQH_rm.5"]])
 
 
 ### Transfer model
@@ -53,7 +54,7 @@ xfer_userExt_Aa <- read_sf("shp/polygon_Eldorado.shp")
 # Generate a transfer of the model to the desired area
 xfer_area_Aa <- xfer_area(
   evalOut = model_Aa_best,
-  curModel = "fc.LQHP_rm.4",
+  curModel = "fc.LQH_rm.5",
   envs = envs_Aa , 
   outputType = "cloglog",
   alg = "maxent.jar",
@@ -64,7 +65,7 @@ xfer_area_Aa <- xfer_area(
 xferExt_Aa <- xfer_area_Aa$xferExt
 
 plot(xfer_area_Aa$xferArea)
-writeRaster(xfer_area_Aa$xferArea, "map_s2016_aegypti.tif")
+writeRaster(xfer_area_Aa$xferArea, "map_s2017_aegypti.tif")
 
 
 ### Binary map
@@ -73,7 +74,7 @@ writeRaster(xfer_area_Aa$xferArea, "map_s2016_aegypti.tif")
 #10 percentile training presence: 
 
 # Select current model and obtain raster prediction
-m_Aa <- model_Aa_best@models[["fc.LQHP_rm.4"]] 
+m_Aa <- model_Aa_best@models[["fc.LQH_rm.5"]] 
 predSel_Aa <- dismo::predict(m_Aa, bgMask_Aa,
                              args = c(paste0("outputformat=", "cloglog"), 
                                       paste0("doclamp=", tolower(as.character(TRUE)))), 
@@ -101,4 +102,4 @@ xfer_area_Aa <- xfer_area_Aa$xferArea > thres_Aa
 # Plot and save the transfer raster
 xferExt_Aa <- xfer_area_Aa
 plot(xfer_area_Aa)
-writeRaster(xfer_area_Aa, "map__s2016aeg_p10.tif")
+writeRaster(xfer_area_Aa, "map__s2017aeg_p10.tif")
