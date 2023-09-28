@@ -119,6 +119,7 @@ model_Aa <- model_maxent(
   fcs = c('L', 'LQ', "H", "LQH", "LQHP"),
   clampSel = TRUE,
   algMaxent = "maxent.jar",
+  catEnvs = c("s2017_water","s2017_bare","s2017_herb"),
   parallel = FALSE)
 
 evalTbl <- model_Aa@results 
@@ -136,6 +137,7 @@ model_Aa2 <- model_maxent(
   fcs = c('L', 'LQ', "H", "LQH", "LQHP"),
   clampSel = TRUE,
   algMaxent = "maxent.jar",
+  catEnvs = c("s2017_water","s2017_bare","s2017_herb"),
   parallel = FALSE)
 
 evalTbl2 <- model_Aa2@results 
@@ -153,6 +155,7 @@ model_Aa3 <- model_maxent(
   fcs = c('L', 'LQ', "H", "LQH", "LQHP"),
   clampSel = TRUE,
   algMaxent = "maxent.jar",
+  catEnvs = c("s2017_water","s2017_bare","s2017_herb"),
   parallel = FALSE)
 
 evalTbl3 <- model_Aa3@results 
