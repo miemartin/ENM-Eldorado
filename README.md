@@ -15,6 +15,6 @@ The order in which the scripts should be used is as follows:
 
 5. Best model Aedes aegypti: This is the script that runs the best selected model. Applies 10-fold cross-validation. The model metrics, the average predictive map, and the response curves of the environmental variables used are obtained. Then the model is transferred to the new study area (in this case, Northeast Argentina) and finally the binary map is obtained by using the “p10” threshold rule.
 
-NOTE: this entire procedure was repeated for each season of the year and for Ae. albopictus.
+NOTE: This entire procedure was repeated for each season of the year and for Ae. albopictus.
 
-5. Average maps: This is the script, the average predictive maps and binary maps are obtained by season of the year (average of, for example, spring-summer 2016 and spring-summer 2017), and the area (in percentages) suitable for the species is calculated from the previously obtained binary maps.
+6. Average maps: This is the script, the average predictive maps and binary maps are obtained by season of the year (average of, for example, spring-summer 2016 and spring-summer 2017), and the area (in percentages) suitable for the species is calculated from the previously obtained binary maps.
