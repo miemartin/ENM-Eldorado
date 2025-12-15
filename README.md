@@ -1,17 +1,19 @@
 # ENM-Eldorado
-This repository contains the scripts that we have developed to build Ecological Niche Models and potential geographical distribution of Aedes aegypti and Aedes albopictus in Eldorado city, Misiones, Argentina.
+This repository contains the scripts that we have developed to build Ecological Niche Models and the potential geographical distribution of Aedes aegypti and Aedes albopictus in Eldorado city, Misiones, Argentina.
 
 All pre- and post-processing of remote sensing data was previously carried out in QGIS 3.18.3 software (https://www.qgis.org/, accessed in 2023).
 
 The order in which the scripts should be used is as follows:
 
-1. Occurrence data: This script imports the occurrence data and does all the processing for it. It eliminates duplicate data, assigns only one data per pixel and finally creates a .csv file where the values of the environmental variables are obtained for each location.
+1. Occurrence data: This script imports the occurrence data and does all the processing for it. It eliminates duplicate data, assigns only one data point per pixel, and finally creates a .csv file where the values of the environmental variables are obtained for each location.
 
-2. VIF analysis: this is the script where the selection of environmental variables is carried out based on the VIF values and Pearson correlation.
+2. Environmental data: This script imports the remote sensing data and does all the processing for it.
 
-3. Modeling candidate Ae. aegypti: this is the script to perform the calibration of candidate models from the combination of different feature classes and regularization multipliers.
+3. VIF analysis: This is the script where the selection of environmental variables is carried out based on the VIF values and Pearson correlation.
 
-4. Best model Ae. aegypti: this is the script that runs the best selected model. Applies 25-fold cross validation. The model metrics, the average predictive map, and the response curves of the environmental variables used are obtained. Then the model is transferred to the new study area (in this case, Northeast Argentina) and finally the binary map is obtained by using the “p10” threshold rule.
+4. Modeling candidate Aedes aegypti: This is the script to perform the calibration of candidate models from the combination of different feature classes and regularization multipliers.
+
+5. Best model Aedes aegypti: This is the script that runs the best selected model. Applies 10-fold cross-validation. The model metrics, the average predictive map, and the response curves of the environmental variables used are obtained. Then the model is transferred to the new study area (in this case, Northeast Argentina) and finally the binary map is obtained by using the “p10” threshold rule.
 
 NOTE: this entire procedure was repeated for each season of the year and for Ae. albopictus.
 
