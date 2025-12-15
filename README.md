@@ -1,20 +1,158 @@
-# ENM-Eldorado
-This repository contains the scripts that we have developed to build Ecological Niche Models and the potential geographical distribution of Aedes aegypti and Aedes albopictus in Eldorado city, Misiones, Argentina.
+ENM-Eldorado
 
-All pre- and post-processing of remote sensing data was previously carried out in QGIS 3.18.3 software (https://www.qgis.org/, accessed in 2023).
+This repository contains the scripts used to build ecological niche models and estimate the potential seasonal distribution of Aedes aegypti and Aedes albopictus in Eldorado city, Misiones, Argentina.
 
-The order in which the scripts should be used is as follows:
+The workflow integrates field occurrence data with remotely sensed environmental variables and applies presence-only ecological niche modeling using MaxEnt.
 
-1. Occurrence data: This script imports the occurrence data and does all the processing for it. It eliminates duplicate data, assigns only one data point per pixel, and finally creates a .csv file where the values of the environmental variables are obtained for each location.
+Software and environment
 
-2. Environmental data: This script imports the remote sensing data and does all the processing for it.
+R (≥ 4.2)
 
-3. VIF analysis: This is the script where the selection of environmental variables is carried out based on the VIF values and Pearson correlation.
+QGIS 3.18.3 (used for initial remote sensing preprocessing)
 
-4. Modeling candidate Aedes aegypti: This is the script to perform the calibration of candidate models from the combination of different feature classes and regularization multipliers.
+Main R packages: terra, raster, sf, dismo, ENMeval, wallace, usdm, tidyverse
 
-5. Best model Aedes aegypti: This is the script that runs the best selected model. Applies 10-fold cross-validation. The model metrics, the average predictive map, and the response curves of the environmental variables used are obtained. Then the model is transferred to the new study area (in this case, Northeast Argentina) and finally the binary map is obtained by using the “p10” threshold rule.
+All spatial analyses are conducted in WGS84 for modeling and reprojected to UTM Zone 21S for area calculations.
 
-NOTE: This entire procedure was repeated for each season of the year and for Ae. albopictus.
+Data overview
+Occurrence data
 
-6. Average maps: This is the script, the average predictive maps and binary maps are obtained by season of the year (average of, for example, spring-summer 2016 and spring-summer 2017), and the area (in percentages) suitable for the species is calculated from the previously obtained binary maps.
+Monthly ovitrap sampling at fixed sites from 2016 to 2018
+
+Sites include tire shops, cemeteries, dwellings, and public green areas
+
+Records were aggregated by season:
+
+Spring–summer
+
+Autumn–winter
+
+A site was considered positive for a species in a season if at least one larva or pupa was detected
+
+Repeated detections within the same site and season were not treated as independent records
+
+Environmental predictors
+
+Sentinel-2 derived indices: NDVI, NDWI, NDBI
+
+Land cover classes: water, impervious surface, bare soil, herbaceous vegetation, tree cover
+
+Distance-to rasters for water, impervious surface, and vegetation
+
+Land Surface Temperature (LST) derived from Landsat 8
+
+All predictors were resampled to 10 m resolution and cropped to the Eldorado urban extent.
+
+Workflow and scripts
+Script 1 – Environmental data preprocessing
+
+Loads remote sensing rasters
+
+Crops and masks layers using the Eldorado city polygon
+
+Resamples all predictors to a common 10 m grid
+
+Reprojects layers when needed
+
+Outputs season-specific raster stacks used for modeling
+
+Script 2 – Occurrence data preprocessing
+
+Loads seasonal occurrence records
+
+Removes records with missing or invalid coordinates
+
+Removes duplicate geographic coordinates
+
+Ensures a single presence point per raster cell
+
+Extracts environmental values at presence locations
+
+Outputs cleaned presence tables for each species and season
+
+Script 3 – Variable selection
+
+Performs multicollinearity analysis using:
+
+Variance Inflation Factor (VIF)
+
+Pearson correlation
+
+Retains non-collinear predictors (VIF < 5)
+
+Produces final predictor tables for model calibration
+
+Script 4 – Model calibration and selection
+
+Calibrates MaxEnt candidate models using:
+
+Multiple feature class combinations
+
+Regularization multipliers
+
+Applies 10-fold random cross-validation
+
+Evaluates models using ENMeval metrics
+
+Selects the best model per species and season
+
+Produces:
+
+Model evaluation tables
+
+Variable importance
+
+Response curves
+
+Script 5 – Model projection and binarization
+
+Projects selected MaxEnt models to the study area
+
+Uses cloglog output
+
+Applies a 10th percentile training presence (p10) threshold
+
+Generates continuous and binary suitability maps for each season and year
+
+Script 6 – Seasonal aggregation and spatial analysis
+
+Reprojects all maps to UTM Zone 21S
+
+Averages continuous suitability maps by season across years
+
+Computes seasonal differences (summer − winter)
+
+Averages binary maps to represent the proportion of years classified as suitable
+
+Calculates:
+
+Percentage of suitable area per species and season
+
+Suitable area in hectares within the Eldorado boundary
+
+Outputs final maps and summary tables
+
+Notes on interpretation
+
+Averaged binary maps represent the temporal consistency of suitability, not strict presence/absence
+
+Distance-to predictors capture spatial gradients of urbanization and vegetation influence
+
+Nearest-neighbor interpolation is used for binary rasters; bilinear interpolation for continuous variables
+
+Models are trained using presence and background data only (no true absences)
+
+Output structure
+
+raster/ – preprocessed environmental layers
+
+data/ – cleaned occurrence tables and extracted predictors
+
+best models/ – final MaxEnt predictions and binary maps
+
+results/ – seasonal averages, difference maps, and area summaries
+
+Reproducibility
+
+All scripts are numbered and should be run sequentially.
+File paths assume the repository root as the working directory.
